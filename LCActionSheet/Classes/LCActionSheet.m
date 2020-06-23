@@ -324,7 +324,7 @@
     [darkView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self);
         make.top.equalTo(self).priorityLow();
-        make.bottom.equalTo(bottomView.mas_top);
+        make.bottom.mas_equalTo(bottomView.mas_top).mas_offset(10);
     }];
     self.darkView = darkView;
     
@@ -822,7 +822,16 @@
         }
     }];
 }
-
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect: self.bottomView.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10, 10)];
+    //创建 layer
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bottomView.bounds;
+    //赋值
+    maskLayer.path = maskPath.CGPath;
+    self.bottomView.layer.mask = maskLayer;
+}
 - (void)hideWithButtonIndex:(NSInteger)buttonIndex {
     if ([self.delegate respondsToSelector:@selector(actionSheet:willDismissWithButtonIndex:)]) {
         [self.delegate actionSheet:self willDismissWithButtonIndex:buttonIndex];
